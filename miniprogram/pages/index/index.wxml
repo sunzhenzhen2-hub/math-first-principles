@@ -1,0 +1,67 @@
+<!-- 学习主页 -->
+<view class="container">
+  <!-- 统计卡片 -->
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-num">{{completed}}/{{total}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{accuracy}}%</text>
+      <text class="stat-label">正确率</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stars}}</text>
+      <text class="stat-label">星星</text>
+    </view>
+  </view>
+
+  <!-- 进度条 -->
+  <view class="progress-section">
+    <view class="progress-info">
+      <text>学习进度</text>
+      <text>{{progressPercent}}%</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+  </view>
+
+  <!-- 阶段列表 -->
+  <block wx:for="{{stages}}" wx:key="name">
+    <view class="stage-title">{{item.name}}</view>
+    <view class="topic-list">
+      <view
+        wx:for="{{item.topics}}"
+        wx:for-item="topic"
+        wx:key="id"
+        class="topic-card {{topic.locked ? 'locked' : ''}} {{topic.done ? 'done' : ''}}"
+        bindtap="goLesson"
+        data-id="{{topic.id}}"
+      >
+        <view class="topic-icon">{{topic.icon}}</view>
+        <view class="topic-info">
+          <text class="topic-title">{{topic.title}}</text>
+          <text class="topic-desc">{{topic.description}}</text>
+          <text class="topic-stars">{{topic.starsStr}}</text>
+        </view>
+        <text class="topic-pct">{{topic.pct}}</text>
+      </view>
+    </view>
+  </block>
+</view>
+
+<!-- 登录弹窗 -->
+<view class="modal" wx:if="{{showLogin}}" bindtap="hideLogin">
+  <view class="modal-card" catchtap>
+    <text class="modal-title">🔐 登录</text>
+    <input placeholder="用户名" bindinput="onUsername" value="{{username}}" />
+    <input placeholder="密码" password bindinput="onPassword" value="{{password}}" />
+    <button class="btn-primary" bindtap="doLogin">登录</button>
+    <view class="auth-switch">
+      <text>没有账号？</text>
+      <text class="link" bindtap="showRegister">注册</text>
+    </view>
+    <text class="auth-error" wx:if="{{authError}}">{{authError}}</text>
+  </view>
+</view>

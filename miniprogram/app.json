@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/lesson/lesson",
+    "pages/quiz/quiz",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#faf6f0",
+    "navigationBarTitleText": "数学第一性原理",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#faf6f0"
+  },
+  "tabBar": {
+    "color": "#8a8a96",
+    "selectedColor": "#c87832",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "学习", "iconPath": "images/home.png", "selectedIconPath": "images/home-active.png" },
+      { "pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/user.png", "selectedIconPath": "images/user-active.png" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

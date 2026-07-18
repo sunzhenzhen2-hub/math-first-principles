@@ -1,0 +1,71 @@
+<!-- 个人中心 -->
+<view class="container">
+  <!-- 未登录 -->
+  <view wx:if="{{!user}}" class="card" style="text-align:center">
+    <text class="profile-icon">👤</text>
+    <text class="profile-title">登录后同步学习进度</text>
+    <view class="auth-form">
+      <input placeholder="用户名" bindinput="onUsername" value="{{username}}" />
+      <input placeholder="密码" password bindinput="onPassword" value="{{password}}" />
+      <button class="btn-primary" bindtap="doLogin" style="width:100%">登录</button>
+      <view class="auth-switch">
+        <text>没有账号？</text>
+        <text class="link" bindtap="switchToRegister">注册</text>
+      </view>
+      <text class="auth-error" wx:if="{{authError}}">{{authError}}</text>
+    </view>
+  </view>
+
+  <!-- 已登录 -->
+  <view wx:if="{{user}}" class="card">
+    <view class="profile-header">
+      <text class="profile-avatar">👤</text>
+      <view>
+        <text class="profile-name">{{user.username}}</text>
+        <text class="profile-email">{{user.email}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习统计 -->
+  <view wx:if="{{user}}" class="card">
+    <text class="section-title">📊 学习统计</text>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-num">{{completedTopics}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{totalTests}}</text>
+        <text class="stat-label">做题数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{accuracy}}%</text>
+        <text class="stat-label">正确率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{totalStars}}</text>
+        <text class="stat-label">星星</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错题本 -->
+  <view wx:if="{{user}}" class="card">
+    <text class="section-title">📕 错题本</text>
+    <view wx:if="{{wrongCount === 0}}" class="empty-state">暂无错题</view>
+    <view wx:for="{{wrongList}}" wx:key="id" class="wrong-item">
+      <text class="wrong-q">{{item.question}}</text>
+      <text class="wrong-a">✅ {{item.correct_answer}}</text>
+      <text class="wrong-u">❌ {{item.user_answer}}</text>
+    </view>
+    <button wx:if="{{wrongCount > 3}}" class="btn-outline" style="width:100%;margin-top:16rpx" bindtap="viewAllWrong">
+      查看全部 {{wrongCount}} 道错题
+    </button>
+  </view>
+
+  <!-- 退出登录 -->
+  <button wx:if="{{user}}" class="btn-outline" style="width:100%;margin-top:24rpx" bindtap="logout">
+    退出登录
+  </button>
+</view>

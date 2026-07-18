@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学第一性原理学习系统</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://www.desmos.com/api/v1.7/calculator.js" async></script>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<header class="hdr" id="hdr">
+  <h1>📐 数学<span>第一性原理</span></h1>
+  <nav id="nav-main">
+    <button class="on" data-view="dash">总览</button>
+    <button data-view="ai-derive">AI 推导</button>
+    <button data-view="review">错题本</button>
+    <button data-view="report">学习报告</button>
+    <button onclick="Placement.start()">🎯 定位测试</button>
+  </nav>
+  <div class="hdr-auth" id="hdr-auth">
+    <button class="btn btn-sm" onclick="App.showAuth('login')">登录</button>
+    <button class="btn btn-sm btn-g" onclick="App.showAuth('register')">注册</button>
+  </div>
+  <div class="hdr-user" id="hdr-user" style="display:none">
+    <span id="user-name"></span>
+    <button class="btn btn-sm btn-o" onclick="App.logout()">退出</button>
+  </div>
+</header>
+
+<!-- 进度条 -->
+<div class="xb">
+  <div class="xb-l"><span>学习进度</span><span id="xp-t">0%</span></div>
+  <div class="xb-r"><div class="xb-f" id="xp-f" style="width:0%"></div></div>
+</div>
+
+<!-- 主内容区 -->
+<main class="m">
+  <!-- 认证页面 -->
+  <div class="sv" id="v-auth">
+    <div class="auth-card" id="auth-card"></div>
+  </div>
+
+  <!-- 总览 -->
+  <div class="sv on" id="v-dash">
+    <div class="stats" id="stats"></div>
+    <div id="stage-list"></div>
+  </div>
+
+  <!-- 课程 -->
+  <div class="sv" id="v-lesson"><div id="lesson-body"></div></div>
+
+  <!-- 测验 -->
+  <div class="sv" id="v-quiz"><div id="quiz-body"></div></div>
+
+  <!-- 测验结果 -->
+  <div class="sv" id="v-result"><div id="result-body"></div></div>
+
+  <!-- AI 推导 -->
+  <div class="sv" id="v-ai-derive">
+    <div class="lesson">
+      <h2>🤖 AI 第一性原理推导</h2>
+      <p style="color:var(--ink-muted);margin-bottom:16px">选择一个主题，AI 将从第一性原理出发推导其核心概念</p>
+      <div class="ai-topic-select" id="ai-topic-select"></div>
+      <div id="ai-derive-result" style="margin-top:20px"></div>
+    </div>
+  </div>
+
+  <!-- 错题本 -->
+  <div class="sv" id="v-review">
+    <div class="wb">
+      <h3>📕 错题本</h3>
+      <p id="wb-empty" style="color:var(--ink-muted);font-size:0.9rem">暂无错题，继续加油！</p>
+      <div id="wb-list"></div>
+    </div>
+  </div>
+
+  <!-- 学习报告 -->
+  <div class="sv" id="v-report"><div id="report-body"></div></div>
+
+  <!-- 定位测试 -->
+  <div class="sv" id="v-placement"><div id="placement-body"></div></div>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/lesson.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/ai-derive.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/placement.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

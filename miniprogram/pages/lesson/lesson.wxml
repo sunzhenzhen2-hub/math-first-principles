@@ -1,0 +1,53 @@
+<!-- 课程页面 -->
+<view class="container">
+  <view class="card">
+    <text class="lesson-title">{{topic.icon}} {{topic.title}}</text>
+
+    <block wx:for="{{sections}}" wx:key="index">
+      <!-- 标题 -->
+      <view wx:if="{{item.type === 'title'}}" class="section-title">{{item.content}}</view>
+      <!-- 正文 -->
+      <view wx:elif="{{item.type === 'text'}}" class="body-text">{{item.content}}</view>
+      <!-- 高亮 -->
+      <view wx:elif="{{item.type === 'highlight'}}" class="highlight">{{item.content}}</view>
+      <!-- 公式 -->
+      <view wx:elif="{{item.type === 'formula'}}" class="formula">{{item.content}}</view>
+      <!-- 例子 -->
+      <view wx:elif="{{item.type === 'ex'}}" class="example">
+        <rich-text nodes="{{item.content}}"></rich-text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 理解检查 -->
+  <view wx:if="{{checkQuestions.length > 0}}" class="card">
+    <text class="section-title" style="color:#c87832">✋ 理解检查</text>
+    <view wx:for="{{checkQuestions}}" wx:key="index" class="quiz-card">
+      <text class="quiz-label">理解检查 {{index + 1}}</text>
+      <text class="quiz-question">{{item.question}}</text>
+      <view class="options">
+        <view
+          wx:for="{{item.options}}"
+          wx:for-item="opt"
+          wx:for-index="oi"
+          wx:key="oi"
+          class="option {{item.answered ? (oi === item.answer ? 'correct' : (oi === item.selected && oi !== item.answer ? 'wrong' : 'disabled')) : ''}}"
+          bindtap="checkAnswer"
+          data-qi="{{index}}"
+          data-oi="{{oi}}"
+        >
+          <text class="opt-letter">{{letters[oi]}}</text>
+          <text>{{opt}}</text>
+        </view>
+      </view>
+      <view class="explanation" wx:if="{{item.showExplanation}}">
+        <text>💡 {{item.explanation}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始测验按钮 -->
+  <button class="btn-primary" style="width:100%;margin-top:24rpx" bindtap="startQuiz">
+    📝 开始章节测试
+  </button>
+</view>
