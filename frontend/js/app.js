@@ -10,8 +10,16 @@ const App = {
       btn.addEventListener('click', () => {
         const view = btn.dataset.view;
         if (view) this.showView(view);
+        // 定位测试按钮无 data-view，点击后也收起手机菜单
+        this.closeMobileNav();
       });
     });
+
+    // 手机端菜单开关
+    const toggle = document.getElementById('nav-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', () => this.toggleMobileNav());
+    }
 
     // 检查登录状态
     if (API.token) {
@@ -31,6 +39,27 @@ const App = {
     Dashboard.render();
   },
 
+  toggleMobileNav() {
+    const hdr = document.getElementById('hdr');
+    const toggle = document.getElementById('nav-toggle');
+    if (!hdr) return;
+    const open = hdr.classList.toggle('nav-open');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+    }
+  },
+
+  closeMobileNav() {
+    const hdr = document.getElementById('hdr');
+    const toggle = document.getElementById('nav-toggle');
+    if (hdr) hdr.classList.remove('nav-open');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', '打开菜单');
+    }
+  },
+
   showView(view) {
     document.querySelectorAll('.sv').forEach(e => e.classList.remove('on'));
     document.querySelectorAll('#nav-main button').forEach(b => b.classList.remove('on'));
@@ -41,6 +70,7 @@ const App = {
     const btn = document.querySelector(`#nav-main button[data-view="${view}"]`);
     if (btn) btn.classList.add('on');
 
+    this.closeMobileNav();
     this.currentView = view;
 
     // 视图特定逻辑

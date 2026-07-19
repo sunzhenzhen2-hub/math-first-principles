@@ -8,27 +8,34 @@
 </head>
 <body>
 
-<!-- 顶栏 -->
+<!-- 顶栏（手机可折叠菜单） -->
 <header class="hdr" id="hdr">
-  <h1>📐 数学<span>第一性原理</span></h1>
+  <div class="hdr-top">
+    <h1>数学<span>第一性原理</span></h1>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="打开菜单" aria-expanded="false">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <div class="hdr-auth" id="hdr-auth">
+      <button class="btn btn-sm" onclick="App.showAuth('login')">登录</button>
+      <button class="btn btn-sm btn-g" onclick="App.showAuth('register')">注册</button>
+    </div>
+    <div class="hdr-user" id="hdr-user" style="display:none">
+      <span id="user-name"></span>
+      <button class="btn btn-sm btn-o" onclick="App.logout()">退出</button>
+    </div>
+  </div>
   <nav id="nav-main">
     <button class="on" data-view="dash">总览</button>
-    <button data-view="stats">📊 报告</button>
-    <button data-view="achievements">🏆 成就</button>
-    <button data-view="favorites">📚 收藏</button>
-    <button data-view="paths">🎯 路径</button>
+    <button data-view="stats">报告</button>
+    <button data-view="achievements">成就</button>
+    <button data-view="favorites">收藏</button>
+    <button data-view="paths">路径</button>
     <button data-view="ai-derive">AI 推导</button>
     <button data-view="review">错题本</button>
-    <button onclick="Placement.start()">🎯 定位测试</button>
+    <button onclick="Placement.start()">定位测试</button>
   </nav>
-  <div class="hdr-auth" id="hdr-auth">
-    <button class="btn btn-sm" onclick="App.showAuth('login')">登录</button>
-    <button class="btn btn-sm btn-g" onclick="App.showAuth('register')">注册</button>
-  </div>
-  <div class="hdr-user" id="hdr-user" style="display:none">
-    <span id="user-name"></span>
-    <button class="btn btn-sm btn-o" onclick="App.logout()">退出</button>
-  </div>
 </header>
 
 <!-- 进度条 -->
@@ -62,8 +69,8 @@
   <!-- AI 推导 -->
   <div class="sv" id="v-ai-derive">
     <div class="lesson">
-      <h2>🤖 AI 第一性原理推导</h2>
-      <p style="color:var(--ink-muted);margin-bottom:16px">选择一个主题，AI 将从第一性原理出发推导其核心概念</p>
+      <h2>公理 · 定理 · 证明</h2>
+      <p style="color:var(--ink-muted);margin-bottom:16px">输出形式化公理/定理陈述与逐步证明（含依据）。选择主题。</p>
       <div class="ai-topic-select" id="ai-topic-select"></div>
       <div id="ai-derive-result" style="margin-top:20px"></div>
     </div>
@@ -73,7 +80,7 @@
   <div class="sv" id="v-review">
     <div class="wb">
       <h3>📕 错题本</h3>
-      <p id="wb-empty" style="color:var(--ink-muted);font-size:0.9rem">暂无错题，继续加油！</p>
+      <p id="wb-empty" style="color:var(--ink-muted);font-size:0.9rem">暂无错题。</p>
       <div id="wb-list"></div>
     </div>
   </div>

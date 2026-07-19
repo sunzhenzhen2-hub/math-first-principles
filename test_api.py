@@ -7,7 +7,7 @@ import io
 # 设置 stdout 为 UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:8088"
 
 def test_health():
     """测试健康检查"""

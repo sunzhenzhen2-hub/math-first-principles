@@ -62,7 +62,7 @@ const Achievements = {
       });
       html += '</div>';
     } else {
-      html += '<p style="color:var(--ink-muted);font-size:0.85rem">暂无成就，继续加油！</p>';
+      html += '<p style="color:var(--ink-muted);font-size:0.85rem">暂无已解锁成就。</p>';
     }
 
     html += '</div><div class="wb">';

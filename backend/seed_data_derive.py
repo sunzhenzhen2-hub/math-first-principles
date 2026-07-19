@@ -91,7 +91,7 @@ DERIVE_SECTIONS = {
     # ═══ 函数世界 ═══
     "t16": [  # 变量与函数 — 函数本质推导
         {"type": "title", "content": "推导：函数的本质"},
-        {"type": "text", "content": "函数不是「神秘的规则」，而是一种对应关系。让我们从第一性原理理解："},
+        {"type": "text", "content": "函数是集合间的单值对应关系。判定标准如下："},
         {"type": "highlight", "content": "函数的本质：给定一个输入 x，有且只有一个输出 y"},
         {"type": "text", "content": "为什么 y = x² 是函数，而 x² + y² = 1 不是？"},
         {"type": "formula", "content": "y = x²：给定 x=2，y 只能是 4（唯一确定）\nx² + y² = 1：给定 x=0，y 可以是 1 或 -1（不唯一）"},

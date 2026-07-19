@@ -35,7 +35,12 @@ def ai_derive():
         if not topic:
             return jsonify({"content": json.dumps({"error": "主题不存在"})})
 
-    content = generate_derivation(topic["title"], topic["description"], extra_context)
+    content = generate_derivation(
+        topic["title"],
+        topic["description"],
+        extra_context,
+        topic_id=topic_id,
+    )
 
     with get_db() as conn:
         conn.execute(

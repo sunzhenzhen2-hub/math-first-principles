@@ -18,7 +18,12 @@ const Graph = {
       el.innerHTML = '';
 
       const bounds = opts.bounds || { left: -10, right: 10, bottom: -10, top: 10 };
-      const width = el.clientWidth || 600;
+      // 容器刚插入 DOM 时 clientWidth 可能为 0，用父级或默认宽度兜底
+      let width = el.clientWidth || el.offsetWidth || 0;
+      if (width < 40 && el.parentElement) {
+        width = el.parentElement.clientWidth || 0;
+      }
+      if (width < 40) width = 600;
       const height = el.clientHeight || 360;
 
       // 创建 SVG
@@ -153,13 +158,40 @@ const Graph = {
   },
 
   _drawExpression(svg, expr, width, height, bounds) {
-    const latex = expr.latex;
+    const latex = (expr.latex || '').trim();
     const color = expr.color || '#c87832';
     const lineWidth = parseFloat(expr.lineWidth) || 2.5;
     const isDashed = expr.lineStyle === 'DASHED';
     const pointStyle = expr.pointStyle || 'NONE';
     const pointSize = parseFloat(expr.pointSize) || 9;
     const label = expr.label || '';
+
+    // 线段: segment((x1,y1),(x2,y2))
+    const segMatch = latex.match(
+      /^segment\(\(\s*([^,]+)\s*,\s*([^)]+)\s*\)\s*,\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)\s*\)$/i
+    );
+    if (segMatch) {
+      const x1 = parseFloat(segMatch[1]);
+      const y1 = parseFloat(segMatch[2]);
+      const x2 = parseFloat(segMatch[3]);
+      const y2 = parseFloat(segMatch[4]);
+      if ([x1, y1, x2, y2].every(Number.isFinite)) {
+        const p1 = this._toScreen(x1, y1, width, height, bounds);
+        const p2 = this._toScreen(x2, y2, width, height, bounds);
+        this._drawLine(svg, p1.x, p1.y, p2.x, p2.y, color, lineWidth, isDashed);
+        if (label) {
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', (p1.x + p2.x) / 2 + 4);
+          text.setAttribute('y', (p1.y + p2.y) / 2 - 4);
+          text.setAttribute('font-size', '11');
+          text.setAttribute('fill', color);
+          text.setAttribute('font-weight', '600');
+          text.textContent = label;
+          svg.appendChild(text);
+        }
+      }
+      return;
+    }
 
     // 解析点 (x,y)
     const pointMatch = latex.match(/^\(([^,]+),([^)]+)\)$/);
@@ -168,7 +200,7 @@ const Graph = {
       const y = parseFloat(pointMatch[2]);
       const pos = this._toScreen(x, y, width, height, bounds);
 
-      if (pointStyle === 'POINT') {
+      if (pointStyle === 'POINT' || pointStyle === 'NONE') {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', pos.x);
         circle.setAttribute('cy', pos.y);
@@ -242,6 +274,8 @@ const Graph = {
       const func = this._parseLatexFunction(funcLatex);
       if (func) {
         this._drawFunction(svg, func, width, height, bounds, color, lineWidth, isDashed, label);
+      } else {
+        console.warn(`[Graph] Unparsed function latex: ${latex}`);
       }
     }
   },
@@ -259,10 +293,8 @@ const Graph = {
   },
 
   _parseLatexFunction(latex) {
-    // 简化的 LaTeX 函数解析器
-    // 支持: x^2, 2x, x+1, sin(x), cos(x), e^x, ln(x), 1/2^x 等
-
-    // 替换常见 LaTeX 函数
+    // 简化的 LaTeX / 初等函数解析器
+    // 支持: x^2, 2x, 2x+1, sin(x), cos(x), e^x, ln(x), 1/2^x 等
     let jsExpr = latex
       .replace(/\\sin\(/g, 'Math.sin(')
       .replace(/\\cos\(/g, 'Math.cos(')
@@ -270,15 +302,24 @@ const Graph = {
       .replace(/\\ln\(/g, 'Math.log(')
       .replace(/\\log\(/g, 'Math.log10(')
       .replace(/\\sqrt\(/g, 'Math.sqrt(')
+      .replace(/sqrt\(/g, 'Math.sqrt(')
       .replace(/\\pi/g, 'Math.PI')
-      .replace(/\\e(?![a-z])/g, 'Math.E')
+      .replace(/\\operatorname\{floor\}/g, 'Math.floor')
+      .replace(/\\e(?![a-zA-Z])/g, 'Math.E')
+      .replace(/\bln\(/g, 'Math.log(')
+      .replace(/\blog\(/g, 'Math.log10(')
       .replace(/\^/g, '**');
 
-    // 尝试创建函数
+    // 隐式乘法: 2x → 2*x, 2(x+1) → 2*(x+1), x(x+1) → x*(x+1)
+    jsExpr = jsExpr
+      .replace(/(\d)\s*([a-zA-Z(])/g, '$1*$2')
+      .replace(/([a-zA-Z)])\s*(\()/g, '$1*$2')
+      .replace(/([a-zA-Z)])\s*(\d)/g, '$1*$2');
+
     try {
-      return new Function('x', `return ${jsExpr};`);
+      return new Function('x', `"use strict"; return (${jsExpr});`);
     } catch (e) {
-      console.warn(`[Graph] Failed to parse function: ${latex}`);
+      console.warn(`[Graph] Failed to parse function: ${latex}`, e);
       return null;
     }
   },

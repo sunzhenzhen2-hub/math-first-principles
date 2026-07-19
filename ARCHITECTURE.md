@@ -108,13 +108,20 @@ graph TB
             R4[ai_bp<br/>/api/ai/*]
             R5[placement_bp<br/>/api/placement/*]
             R6[health<br/>/api/health]
+            R7[stats_bp<br/>/api/stats/*]
+            R8[achievements_bp<br/>/api/achievements/*]
+            R9[favorites_bp<br/>/api/favorites/*<br/>/api/notes/*]
+            R10[paths_bp<br/>/api/paths/*]
         end
         subgraph 中间件
             MW1[CORS 跨域]
             MW2[JWT 认证<br/>@login_required]
         end
         subgraph 服务层
-            SV1[ai_service<br/>OpenAI 集成]
+            SV1[ai_service<br/>OpenAI兼容_MiMo]
+            SV2[stats_service]
+            SV3[achievements_service]
+            SV4[paths_service]
         end
         subgraph 数据层
             DB[(SQLite<br/>math_learning.db)]
@@ -122,17 +129,20 @@ graph TB
     end
 
     subgraph 外部服务
-        EXT1[OpenAI API<br/>GPT-4o-mini]
+        EXT1[MiMo_API<br/>mimo-v2.5]
     end
 
     FW -->|HTTP| MW1
     MP -->|HTTP| MW1
-    MW1 --> R1 & R2 & R3 & R4 & R5 & R6
-    R1 & R3 & R4 & R5 --> MW2
+    MW1 --> R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10
+    R1 & R3 & R4 & R5 & R7 & R8 & R9 & R10 --> MW2
     MW2 --> DB
     R2 --> DB
     R6 --> DB
     R4 --> SV1
+    R7 --> SV2
+    R8 --> SV3
+    R10 --> SV4
     SV1 --> EXT1
     FW --> DM
 ```
@@ -287,6 +297,32 @@ erDiagram
 | AI | POST | `/api/ai/explain` | 是 | AI 错题解释 |
 | 定位 | GET | `/api/placement/questions` | 否 | 定位测试题 |
 | 定位 | POST | `/api/placement/submit` | 是 | 提交定位测试 |
+| 统计 | POST | `/api/stats/session/start` | 是 | 开始学习会话 |
+| 统计 | POST | `/api/stats/session/end` | 是 | 结束学习会话 |
+| 统计 | GET | `/api/stats/summary` | 是 | 学习统计摘要 |
+| 统计 | GET | `/api/stats/daily` | 是 | 日统计 |
+| 统计 | GET | `/api/stats/weekly` | 是 | 周统计 |
+| 统计 | GET | `/api/stats/topic-mastery` | 是 | 主题掌握度 |
+| 统计 | POST | `/api/stats/record-quiz` | 是 | 记录测验结果 |
+| 成就 | GET | `/api/achievements` | 否 | 成就定义列表 |
+| 成就 | GET | `/api/achievements/user` | 是 | 用户已获成就 |
+| 成就 | POST | `/api/achievements/check` | 是 | 检查并解锁成就 |
+| 成就 | GET | `/api/achievements/leaderboard` | 否 | 积分排行榜 |
+| 积分 | GET | `/api/points` | 是 | 当前积分 |
+| 积分 | GET | `/api/points/history` | 是 | 积分历史 |
+| 积分 | GET | `/api/streak` | 是 | 连续学习天数 |
+| 收藏 | GET | `/api/favorites` | 是 | 收藏列表 |
+| 收藏 | POST | `/api/favorites` | 是 | 添加收藏 |
+| 收藏 | DELETE | `/api/favorites/<topic_id>` | 是 | 取消收藏 |
+| 收藏 | GET | `/api/favorites/check/<topic_id>` | 是 | 是否已收藏 |
+| 笔记 | GET | `/api/notes` | 是 | 笔记列表 |
+| 笔记 | POST | `/api/notes` | 是 | 新增笔记 |
+| 笔记 | PUT | `/api/notes/<id>` | 是 | 更新笔记 |
+| 笔记 | DELETE | `/api/notes/<id>` | 是 | 删除笔记 |
+| 路径 | GET | `/api/paths/recommend` | 是 | 推荐学习路径 |
+| 路径 | POST | `/api/paths/generate` | 是 | 生成个性化路径 |
+| 路径 | GET | `/api/paths/current` | 是 | 当前学习路径 |
+| 路径 | GET | `/api/paths/weak-areas` | 是 | 弱项分析 |
 
 ---
 
@@ -300,19 +336,19 @@ graph TB
     end
 
     subgraph 服务器
-        Flask[Flask :8000]
+        Flask[Flask :8088]
         SQLite[(SQLite DB)]
         Static[静态文件<br/>frontend/]
     end
 
     subgraph 云端
-        OpenAI[OpenAI API]
+        MiMo[小米MiMo_API]
     end
 
     Browser -->|HTTP| Flask
     WeChat -->|HTTP| Flask
     Flask --> SQLite
     Flask --> Static
-    Flask -->|HTTPS| OpenAI
+    Flask -->|HTTPS| MiMo
     Static --> Browser
 ```
