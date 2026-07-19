@@ -51,9 +51,26 @@ python main.py
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
+| `AI_API_KEY` | 小米 MiMo API Key | （空） |
+| `AI_BASE_URL` | API 端点 | https://token-plan-cn.xiaomimimo.com/v1 |
+| `AI_MODEL` | 模型名称 | mimo-v2.5 |
 | `MATH_SECRET_KEY` | JWT 密钥 | dev-secret |
-| `OPENAI_API_KEY` | OpenAI API Key | （空） |
-| `OPENAI_MODEL` | OpenAI 模型 | gpt-4o-mini |
+
+### 配置小米 MiMo AI
+
+1. 访问 https://mimo.mi.com 注册账号
+2. 进入 Token Plan 页面获取 API Key
+3. 设置环境变量：
+
+```bash
+# Windows
+set AI_API_KEY=your-api-key
+
+# Linux/Mac
+export AI_API_KEY=your-api-key
+```
+
+或创建 `.env` 文件（参考 `.env.example`）。
 
 ## 技术栈
 

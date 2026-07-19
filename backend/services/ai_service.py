@@ -1,15 +1,15 @@
 """AI 内容生成服务 — 增强版（含图形）"""
 import hashlib
 import json
-from config import OPENAI_API_KEY, OPENAI_MODEL
+from config import AI_API_KEY, AI_BASE_URL, AI_MODEL
 
 
 def _get_client():
-    if not OPENAI_API_KEY:
+    if not AI_API_KEY:
         return None
     try:
         from openai import OpenAI
-        return OpenAI(api_key=OPENAI_API_KEY)
+        return OpenAI(api_key=AI_API_KEY, base_url=AI_BASE_URL)
     except ImportError:
         return None
 
@@ -40,7 +40,7 @@ def generate_derivation(topic_title: str, topic_description: str, extra_context:
 {f'补充信息：{extra_context}' if extra_context else ''}"""
 
     response = client.chat.completions.create(
-        model=OPENAI_MODEL,
+        model=AI_MODEL,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         temperature=0.7,
@@ -67,7 +67,7 @@ def generate_quiz(topic_title: str, topic_description: str, count: int = 3) -> s
 主题描述：{topic_description}"""
 
     response = client.chat.completions.create(
-        model=OPENAI_MODEL,
+        model=AI_MODEL,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         temperature=0.7
@@ -95,7 +95,7 @@ def explain_wrong_answer(question: str, user_answer: str, correct_answer: str, t
 4. 简洁明了，200 字以内"""
 
     response = client.chat.completions.create(
-        model=OPENAI_MODEL,
+        model=AI_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.5
     )
