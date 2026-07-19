@@ -58,6 +58,12 @@ with get_db() as conn:
                 )
         print(f"已为 {len(DERIVE_SECTIONS)} 个主题补充推导过程")
 
+    # 导入成就定义
+    achievement_count = conn.execute("SELECT COUNT(*) as c FROM achievements").fetchone()["c"]
+    if achievement_count == 0:
+        from seed_data_achievements import seed_achievements
+        seed_achievements(conn)
+
     extra_quiz_count = conn.execute(
         "SELECT COUNT(*) FROM quiz_questions WHERE id > 200"
     ).fetchone()[0]
@@ -107,12 +113,20 @@ from blueprints.content_bp import content_bp
 from blueprints.progress_bp import progress_bp
 from blueprints.ai_bp import ai_bp
 from blueprints.placement_bp import placement_bp
+from blueprints.stats_bp import stats_bp
+from blueprints.achievements_bp import achievements_bp
+from blueprints.favorites_bp import favorites_bp
+from blueprints.paths_bp import paths_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(content_bp)
 app.register_blueprint(progress_bp)
 app.register_blueprint(ai_bp)
 app.register_blueprint(placement_bp)
+app.register_blueprint(stats_bp)
+app.register_blueprint(achievements_bp)
+app.register_blueprint(favorites_bp)
+app.register_blueprint(paths_bp)
 
 
 @app.route("/api/health")
@@ -130,4 +144,4 @@ def serve_frontend(path=""):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8088, debug=True)

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数学第一性原理学习系统</title>
 <link rel="stylesheet" href="css/style.css">
-<script src="https://www.desmos.com/api/v1.7/calculator.js" async></script>
 </head>
 <body>
 
@@ -14,9 +13,12 @@
   <h1>📐 数学<span>第一性原理</span></h1>
   <nav id="nav-main">
     <button class="on" data-view="dash">总览</button>
+    <button data-view="stats">📊 报告</button>
+    <button data-view="achievements">🏆 成就</button>
+    <button data-view="favorites">📚 收藏</button>
+    <button data-view="paths">🎯 路径</button>
     <button data-view="ai-derive">AI 推导</button>
     <button data-view="review">错题本</button>
-    <button data-view="report">学习报告</button>
     <button onclick="Placement.start()">🎯 定位测试</button>
   </nav>
   <div class="hdr-auth" id="hdr-auth">
@@ -79,6 +81,18 @@
   <!-- 学习报告 -->
   <div class="sv" id="v-report"><div id="report-body"></div></div>
 
+  <!-- 学习统计 -->
+  <div class="sv" id="v-stats"><div id="stats-body"></div></div>
+
+  <!-- 成就系统 -->
+  <div class="sv" id="v-achievements"><div id="achievements-body"></div></div>
+
+  <!-- 收藏笔记 -->
+  <div class="sv" id="v-favorites"><div id="favorites-body"></div></div>
+
+  <!-- 学习路径 -->
+  <div class="sv" id="v-paths"><div id="paths-body"></div></div>
+
   <!-- 定位测试 -->
   <div class="sv" id="v-placement"><div id="placement-body"></div></div>
 </main>
@@ -92,6 +106,10 @@
 <script src="js/ai-derive.js"></script>
 <script src="js/progress.js"></script>
 <script src="js/placement.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/paths.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

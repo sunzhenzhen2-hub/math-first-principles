@@ -115,4 +115,120 @@ def init_db():
                 explanation TEXT,
                 sort_order INTEGER NOT NULL
             );
+
+            -- ========== 功能增强: 学习报告与数据 ==========
+
+            CREATE TABLE IF NOT EXISTS study_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                topic_id TEXT NOT NULL,
+                duration_seconds INTEGER DEFAULT 0,
+                started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (topic_id) REFERENCES topics(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS daily_stats (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                date TEXT NOT NULL,
+                study_minutes INTEGER DEFAULT 0,
+                questions_attempted INTEGER DEFAULT 0,
+                questions_correct INTEGER DEFAULT 0,
+                topics_completed INTEGER DEFAULT 0,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                UNIQUE(user_id, date)
+            );
+
+            -- ========== 功能增强: 成就与激励系统 ==========
+
+            CREATE TABLE IF NOT EXISTS achievements (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                icon TEXT NOT NULL,
+                criteria_type TEXT NOT NULL,
+                criteria_value INTEGER NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS user_achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                achievement_id TEXT NOT NULL,
+                earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (achievement_id) REFERENCES achievements(id),
+                UNIQUE(user_id, achievement_id)
+            );
+
+            CREATE TABLE IF NOT EXISTS user_points (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL UNIQUE,
+                total_points INTEGER DEFAULT 0,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS point_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                points INTEGER NOT NULL,
+                reason TEXT NOT NULL,
+                reference_id TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS study_streaks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL UNIQUE,
+                current_streak INTEGER DEFAULT 0,
+                longest_streak INTEGER DEFAULT 0,
+                last_study_date TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+
+            -- ========== 功能增强: 收藏与笔记 ==========
+
+            CREATE TABLE IF NOT EXISTS favorites (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                topic_id TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (topic_id) REFERENCES topics(id),
+                UNIQUE(user_id, topic_id)
+            );
+
+            CREATE TABLE IF NOT EXISTS notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                topic_id TEXT NOT NULL,
+                section_id INTEGER,
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (topic_id) REFERENCES topics(id)
+            );
+
+            -- ========== 功能增强: 个性化学习路径 ==========
+
+            CREATE TABLE IF NOT EXISTS learning_paths (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL UNIQUE,
+                path_data TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+
+            -- ========== 索引 ==========
+
+            CREATE INDEX IF NOT EXISTS idx_study_sessions_user ON study_sessions(user_id);
+            CREATE INDEX IF NOT EXISTS idx_daily_stats_user_date ON daily_stats(user_id, date);
+            CREATE INDEX IF NOT EXISTS idx_user_achievements_user ON user_achievements(user_id);
+            CREATE INDEX IF NOT EXISTS idx_point_history_user ON point_history(user_id);
+            CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id);
+            CREATE INDEX IF NOT EXISTS idx_notes_user_topic ON notes(user_id, topic_id);
         """)

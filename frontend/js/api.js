@@ -4,7 +4,7 @@
  */
 const API = {
   BASE: window.location.origin.includes('localhost')
-    ? 'http://localhost:8000'
+    ? 'http://localhost:8088'
     : window.location.origin,
 
   token: localStorage.getItem('math_token') || null,
@@ -54,4 +54,38 @@ const API = {
   // AI
   async aiDerive(topicId, extra) { return this._fetch('/api/ai/derive', { method: 'POST', body: JSON.stringify({ topic_id: topicId, extra_context: extra }) }); },
   async aiExplain(q, ua, ca, title) { return this._fetch('/api/ai/explain', { method: 'POST', body: JSON.stringify({ question: q, user_answer: ua, correct_answer: ca, topic_title: title }) }); },
+
+  // ========== 学习统计 ==========
+  async startStudySession(topicId) { return this._fetch('/api/stats/session/start', { method: 'POST', body: JSON.stringify({ topic_id: topicId }) }); },
+  async endStudySession(sessionId) { return this._fetch('/api/stats/session/end', { method: 'POST', body: JSON.stringify({ session_id: sessionId }) }); },
+  async getStatsSummary() { return this._fetch('/api/stats/summary'); },
+  async getDailyStats(days) { return this._fetch(`/api/stats/daily?days=${days || 7}`); },
+  async getWeeklyStats() { return this._fetch('/api/stats/weekly'); },
+  async getTopicMastery() { return this._fetch('/api/stats/topic-mastery'); },
+  async recordQuizAttempt(correct) { return this._fetch('/api/stats/record-quiz', { method: 'POST', body: JSON.stringify({ correct }) }); },
+
+  // ========== 成就系统 ==========
+  async getAchievements() { return this._fetch('/api/achievements'); },
+  async getUserAchievements() { return this._fetch('/api/achievements/user'); },
+  async checkAchievements() { return this._fetch('/api/achievements/check', { method: 'POST' }); },
+  async getLeaderboard() { return this._fetch('/api/achievements/leaderboard'); },
+  async getPoints() { return this._fetch('/api/points'); },
+  async getPointsHistory() { return this._fetch('/api/points/history'); },
+  async getStreak() { return this._fetch('/api/streak'); },
+
+  // ========== 收藏与笔记 ==========
+  async getFavorites() { return this._fetch('/api/favorites'); },
+  async addFavorite(topicId) { return this._fetch('/api/favorites', { method: 'POST', body: JSON.stringify({ topic_id: topicId }) }); },
+  async removeFavorite(topicId) { return this._fetch(`/api/favorites/${topicId}`, { method: 'DELETE' }); },
+  async checkFavorite(topicId) { return this._fetch(`/api/favorites/check/${topicId}`); },
+  async getNotes(topicId) { return this._fetch(`/api/notes${topicId ? '?topic_id=' + topicId : ''}`); },
+  async addNote(topicId, content, sectionId) { return this._fetch('/api/notes', { method: 'POST', body: JSON.stringify({ topic_id: topicId, content, section_id: sectionId }) }); },
+  async updateNote(noteId, content) { return this._fetch(`/api/notes/${noteId}`, { method: 'PUT', body: JSON.stringify({ content }) }); },
+  async deleteNote(noteId) { return this._fetch(`/api/notes/${noteId}`, { method: 'DELETE' }); },
+
+  // ========== 学习路径 ==========
+  async getRecommendations() { return this._fetch('/api/paths/recommend'); },
+  async generatePath() { return this._fetch('/api/paths/generate', { method: 'POST' }); },
+  async getCurrentPath() { return this._fetch('/api/paths/current'); },
+  async getWeakAreas() { return this._fetch('/api/paths/weak-areas'); },
 };

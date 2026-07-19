@@ -57,6 +57,18 @@ const App = {
       case 'ai-derive':
         AIDerive.render();
         break;
+      case 'stats':
+        Stats.render();
+        break;
+      case 'achievements':
+        Achievements.render();
+        break;
+      case 'favorites':
+        Favorites.render();
+        break;
+      case 'paths':
+        Paths.render();
+        break;
     }
 
     Dashboard.updateXP();
